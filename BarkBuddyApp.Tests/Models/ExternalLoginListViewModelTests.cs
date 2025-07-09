@@ -7,12 +7,10 @@ using System.Collections.Generic;
 public class ExternalLoginListViewModelTests
 {
     [Fact]
-    public void DummyTest_ExternalLoginListViewModel_IsValid()
+    public void ExternalLoginListViewModel_ShouldSetReturnUrl()
     {
-        var model = new ExternalLoginListViewModel();
-        var context = new ValidationContext(model);
-        var results = new List<ValidationResult>();
-        Validator.TryValidateObject(model, context, results, true);
-        results.Should().NotBeNull();
+        var model = new ExternalLoginListViewModel { ReturnUrl = "/return" };
+        model.ReturnUrl.Should().Be("/return");
     }
+
 }

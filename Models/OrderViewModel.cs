@@ -9,7 +9,8 @@ namespace BarkBuddyApp.Models
     public class OrderViewModel
     {
         [Key]
-        public int Id { get; set; }  
+        public int Id { get; set; }
+        [Required]
         public Buyer Buyer { get; set; }
         public virtual List<ShoppingCartItem> ShoppingCartItems { get; set; } = new List<ShoppingCartItem>();
     }

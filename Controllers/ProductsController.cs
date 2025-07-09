@@ -110,6 +110,7 @@ namespace BarkBuddyApp.Controllers
             return View(product);
         }
 
+        
         public ActionResult DeliveryInfo()
         {
 
@@ -168,7 +169,9 @@ namespace BarkBuddyApp.Controllers
             
             return View(buyer);
         }
+        
 
+  
 
 
         public ActionResult Orders()

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 
 namespace BarkBuddyApp.Models
 {
-    public class ShoppingCart
+   public class ShoppingCart
     {
         public List<string> BuyingProducts { get; set; }
         public List<double> Prices { get; set; }

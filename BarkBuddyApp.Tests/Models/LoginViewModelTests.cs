@@ -6,13 +6,60 @@ using System.Collections.Generic;
 
 public class LoginViewModelTests
 {
-    [Fact]
-    public void DummyTest_LoginViewModel_IsValid()
+    private IList<ValidationResult> ValidateModel(object model)
     {
-        var model = new LoginViewModel();
-        var context = new ValidationContext(model);
         var results = new List<ValidationResult>();
+        var context = new ValidationContext(model, null, null);
         Validator.TryValidateObject(model, context, results, true);
-        results.Should().NotBeNull();
+        return results;
+    }
+
+    [Fact]
+    public void LoginViewModel_ShouldBeInvalid_WhenEmailIsMissing()
+    {
+     
+        var model = new LoginViewModel
+        {
+            Email = null,
+            Password = "secret"
+        };
+
+    
+        var results = ValidateModel(model);
+
+        results.Should().ContainSingle(r => r.MemberNames.Contains("Email"));
+    }
+
+    [Fact]
+    public void LoginViewModel_ShouldBeInvalid_WhenPasswordIsMissing()
+    {
+        
+        var model = new LoginViewModel
+        {
+            Email = "user@example.com",
+            Password = null
+        };
+
+        
+        var results = ValidateModel(model);
+
+       
+        results.Should().ContainSingle(r => r.MemberNames.Contains("Password"));
+    }
+
+    [Fact]
+    public void LoginViewModel_ShouldBeValid_WhenAllDataIsCorrect()
+    {
+      
+        var model = new LoginViewModel
+        {
+            Email = "user@example.com",
+            Password = "StrongPassword"
+        };
+
+        var results = ValidateModel(model);
+
+        
+        results.Should().BeEmpty();
     }
 }

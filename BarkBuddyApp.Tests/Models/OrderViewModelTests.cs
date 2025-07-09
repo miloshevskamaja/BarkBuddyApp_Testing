@@ -1,4 +1,4 @@
-using Xunit;
+﻿using Xunit;
 using System.ComponentModel.DataAnnotations;
 using BarkBuddyApp.Models;
 using FluentAssertions;
@@ -6,13 +6,59 @@ using System.Collections.Generic;
 
 public class OrderViewModelTests
 {
-    [Fact]
-    public void DummyTest_OrderViewModel_IsValid()
+    private IList<ValidationResult> ValidateModel(object model)
     {
-        var model = new OrderViewModel();
-        var context = new ValidationContext(model);
         var results = new List<ValidationResult>();
+        var context = new ValidationContext(model, null, null);
         Validator.TryValidateObject(model, context, results, true);
-        results.Should().NotBeNull();
+        return results;
     }
+
+    [Fact]
+    public void OrderViewModel_ShouldBeValid_WhenAllFieldsSet()
+    {
+        var model = new OrderViewModel
+        {
+            Id = 1,
+            Buyer = new Buyer { Name = "John Doe", Email = "john@example.com" }, // пример
+            ShoppingCartItems = new List<ShoppingCartItem>
+            {
+                new ShoppingCartItem { ProductId = 1, Quantity = 2 }
+            }
+        };
+
+        var results = ValidateModel(model);
+
+        results.Should().BeEmpty(); // No validation errors
+    }
+    [Fact]
+    public void OrderViewModel_ShouldBeInvalid_WhenBuyerIsNull()
+    {
+        var model = new OrderViewModel
+        {
+            Id = 2,
+            Buyer = null,
+            ShoppingCartItems = new List<ShoppingCartItem>()
+        };
+
+        var results = ValidateModel(model);
+
+        results.Should().Contain(r => r.MemberNames.Contains("Buyer"));
+    }
+
+    [Fact]
+    public void OrderViewModel_ShouldBeInvalid_WhenBuyerIsMissing()
+    {
+        var model = new OrderViewModel
+        {
+            Id = 2,
+            Buyer = null,
+            ShoppingCartItems = new List<ShoppingCartItem>()
+        };
+
+        var results = ValidateModel(model);
+
+        results.Should().Contain(r => r.MemberNames.Contains("Buyer")); // очекувана грешка
+    }
+
 }
