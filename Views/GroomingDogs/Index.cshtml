@@ -1,0 +1,78 @@
+﻿@model IEnumerable<BarkBuddyApp.Models.GroomingDog>
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+</head>
+<h2 style="text-align:center;">Prices for Grooming</h2>
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a href="/GroomingDogs/Create" class="btn btn-outline-primary">
+            Create New Dog Breed
+        </a>
+    </p>
+}
+<p>
+    <br />
+</p>
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 col-xs-6 border-primary mb-3">
+            <div class="card mb-3" style="max-width:540px;">
+                <div class="row g-0">
+                    <div class="col-md-12">
+                        
+                        <div class="card-header text-white" style="background-color:darkgreen;">
+                            <p class="card-text">
+                                <h5 class="card-title">
+                                    @item.Name
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a class="text-white float-right" href="/GroomingDogs/Edit/@item.Id"><i class="bi bi-pencil-square"></i></a>
+                                        <a class="text-white float-right" href="/GroomingDogs/Delete/@item.Id"><i class="bi bi-trash"></i></a>
+                                    }
+                                </h5>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <img src="@item.ImageUrl" width="220" height="220" alt="@item.Name" />
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-body">
+                           
+                            <p class="card-text"><b>Price for Bathing and Grooming: </b><b style="color:red;">@item.PriceForGrooming</b>$</p>
+                            <p>Special requests and hairstyles are charged extra.</p>
+                           
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card-footer text-center">
+                            <p class="card-text">
+
+                                <a href="/Products/ScheduleGrooming" class="btn text-white" style="margin-bottom:4px; background-color:darkred;">
+
+                                    <i class="fas fa-clock"></i> Schedule Grooming
+                                </a>
+
+
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+    }
+</div>
+
+
+

@@ -1,0 +1,106 @@
+﻿@model IEnumerable<BarkBuddyApp.Models.OrderViewModel>
+
+@{
+    ViewBag.Title = "Orders";
+    int num = 1;
+    
+}
+
+<h2>Orders</h2>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+
+</head>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order No.</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>PostalCode</th>
+            <th>Country</th>
+            <th>Contact Number</th>
+            <th>Email</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            if (order.ShoppingCartItems != null)
+            {
+                bool firstRow = true;
+                for (int i = 0; i < order.ShoppingCartItems.Count; i++)
+                {
+                    <tr>
+                        @if (firstRow) 
+                        {
+
+                            <td><b>@num</b></td>
+                            <td>@order.Buyer.Name</td>
+                            <td>@order.Buyer.Surname</td>
+                            <td>@order.Buyer.Address</td>
+                            <td>@order.Buyer.City</td>
+                            <td>@order.Buyer.PostalCode</td>
+                            <td>@order.Buyer.Country</td>
+                            <td>@order.Buyer.ContactNumber</td>
+                            <td>@order.Buyer.Email</td>
+                            firstRow = false;
+                        }
+                        else
+                        {
+                            <td colspan="9"></td>
+
+                        }
+
+                        <td>@order.ShoppingCartItems[i].ProductName</td>
+                        <td>@order.ShoppingCartItems[i].Quantity</td>
+                        <td>@order.ShoppingCartItems[i].Price.ToString("c")</td>
+
+
+
+                        <td>
+                            @(
+                        (order.ShoppingCartItems[i].Price * order.ShoppingCartItems[i].Quantity).ToString("c")
+                         )
+                        </td>
+
+                    </tr>
+                }
+                <tr>
+
+                    <td colspan="10" class="text-right">Order Total:</td>
+                    <td colspan="2">
+                        <b>
+                            @(
+                        order.ShoppingCartItems.Sum(item => item.Price * item.Quantity)
+                        .ToString("c")
+                    )
+                        </b>
+                    </td>
+                    <td>
+                        <form method="post" action="@Url.Action("RemoveItem2", "Products")" style="display:inline;">
+                            <input type="hidden" name="orderId" value="@order.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="14"></td>
+                </tr>
+                
+                num++;
+
+
+            }
+        }
+    </tbody>
+</table>

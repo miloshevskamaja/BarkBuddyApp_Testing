@@ -1,0 +1,78 @@
+﻿@model BarkBuddyApp.Models.OrderViewModel
+@{
+    ViewBag.Title = "DeliveryInfo";
+}
+
+
+<style>
+    .colored-border {
+        border-style: double;
+        border-width: 5px;
+        border-color: green; /* Top, right, bottom, left */
+        padding: 20px;
+    }
+</style>
+
+<div class="colored-border">
+    <h2 style="text-align:center;">DeliveryInfo</h2>
+
+
+
+
+    <h3 style="margin-bottom:10px; text-align:center;">Enter Delivery Information</h3>
+
+
+    @*<form action="/Products/DeliveryInfo" method="post">*@
+    @using (Html.BeginForm("DeliveryInfo", "Products", FormMethod.Post))
+    {
+
+        <div style="padding-left:550px;">
+            <div style="margin-bottom:10px;">
+                <label for="Name" style="margin-right: 55px;">Name</label><br />
+                <input type="text" name="Buyer.Name" id="Name" value="@Model.Buyer.Name" required />
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <label for="Surname" style="margin-right: 33px;">Surname</label> <br />
+
+                <input type="text" name="Buyer.Surname" id="Surname" value="@Model.Buyer.Surname" required />
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <label for="ContactNumber" style="margin-right:5px;">Contact Number</label> <br />
+                <input type="text" name="Buyer.ContactNumber" id="ContactNumber" value="@Model.Buyer.ContactNumber" required />
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <label for="Email" style="margin-right:35px;">Email</label> <br />
+                <input type="email" name="Buyer.Email" id="Email" value="@Model.Buyer.Email" required />
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <label for="Address" style="margin-right:33px;">Address</label> <br />
+                <input type="text" name="Buyer.Address" id="Address" value="@Model.Buyer.Address" required />
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <label for="PostalCode" style="margin-right:10px;">Postal Code</label> <br />
+                <input type="text" name="Buyer.PostalCode" id="PostalCode" value="@Model.Buyer.PostalCode" required />
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <label for="City" style="margin-right:55px;">City</label> <br />
+                <input type="text" name="Buyer.City" id="City" value="@Model.Buyer.City" required />
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <label for="Country" style="margin-right:33px;">Country</label> <br />
+                <input type="text" name="Buyer.Country" id="Country" value="@Model.Buyer.Country" required />
+            </div>
+            <br />
+        </div>
+        <div style="text-align:center">
+            <button type="submit" class="btn btn-primary">Submit Order</button>
+        </div>
+
+    }
+</div>
+

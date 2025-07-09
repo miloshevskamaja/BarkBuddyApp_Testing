@@ -1,0 +1,162 @@
+﻿@model IEnumerable<BarkBuddyApp.Models.Product>
+
+@{
+    ViewBag.Title = "Products";
+}
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <script>
+        function showAddToCartMessage(event) {
+            // Show the message
+            //event.preventDefault();
+            var messageElement = document.getElementById('cartMessage');
+            messageElement.style.display = 'block';
+
+
+
+            // Hide the message after 3 seconds
+            setTimeout(function () {
+                messageElement.style.display = 'none';
+            }, 5000); // 3000 milliseconds = 3 seconds
+        }
+    </script>
+
+
+</head>
+
+<h2>Products</h2>
+
+@if (User.IsInRole("Admin")) { 
+
+    <p>
+        <a href="/Products/Create" class="btn btn-outline-primary">
+            Create New Product
+        </a>
+    </p>
+}
+<p>
+    <br />
+</p>
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 col-xs-6 border-primary mb-3">
+                <div class="card mb-3" style="max-width:540px;">
+                    <div class="row g-0">
+                        <div class="col-md-12">
+                            <div id="cartMessage" style="display:none;position:fixed; top: 150px; right: 800px; background-color: #28a745; color: white; padding: 10px; border-radius: 5px;">
+                                Added to Cart!
+                            </div>
+                            <div class="card-header text-white bg-dark">
+                                <p class="card-text">
+                                    <h5 class="card-title">
+                                        @item.Name
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a class="text-white float-right" href="/Products/Edit/@item.Id"><i class="bi bi-pencil-square"></i></a>
+                                            <a class="text-white float-right" href="/Products/Delete/@item.Id"><i class="bi bi-trash"></i></a>
+                                        }
+                                    </h5>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <img src="@item.ImageUrl" width="220" height="220" alt="@item.Name" />
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card-body">
+                                <p class="card-text">@item.Description</p>
+
+                                <p class="card-text"><b>Producer: </b>@item.Producer.Name</p>
+                                <p class="card-text"><b>Price for 1kg: </b>@item.Price$</p>
+                                <p class="card-text"><b>Price for 10kg: </b>@item.Price2$</p>
+                                <a style="margin-bottom:8px; padding-left:15px;" class="btn btn-outline-primary float-right" href="/Products/Details/@item.Id">
+                                    <i class="bi bi-eye-fill"></i> Show Details
+                                </a>
+                            </div>
+
+                        </div>
+                        <div class="col-md-12">
+                            <div class="card-footer text-center">
+                                <p class="card-text">
+
+                                    <a href="/Products/AddToCart/@item.Id" class="btn btn-success text-white" style="margin-bottom:4px;" onclick="showAddToCartMessage(event)">
+
+                                        <i class="bi bi-cart-plus"></i> Add to Cart <b>1kg</b> (Price @item.Price.ToString("c"))
+                                    </a>
+                                    <a href="/Products/AddToCart2/@item.Id" class="btn btn-success text-white" onclick="showAddToCartMessage(event)">
+                                        <i class="bi bi-cart-plus"></i> Add to Cart <b>10kg</b> (Price @item.Price2.ToString("c"))
+                                    </a>
+
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+
+
+
+
+
+
+
+    @*
+        <!--<table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ImageUrl)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Producer)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Price)
+                </th>
+
+                <th></th>
+            </tr>
+    *@
+    @*
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    <img class="rounded-3" src="@item.ImageUrl" alt="@item.Name" style="max-width:180px" />-->
+                    @* @Html.DisplayFor(modelItem => item.ImageUrl)
+                <!--</td>
+                <td>-->
+                     <img src="@item.Producer.Logo"/>
+                    <!--@Html.DisplayFor(modelItem => item.Producer.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+
+        </table>-->
+    *@

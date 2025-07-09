@@ -1,0 +1,47 @@
+﻿
+@model BarkBuddyApp.Models.Grooming
+
+@{
+    ViewBag.Title = "Schedule Grooming";
+}
+
+<style>
+    .colored-border {
+        border-style: double;
+        border-width: 5px;
+        border-color: green; 
+        padding: 20px;
+    }
+</style>
+
+<div class="colored-border" style="padding-left:500px;">
+    <h2>Schedule Grooming</h2>
+    <br />
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <form asp-action="ScheduleGrooming" method="post">
+        <div class="form-group">
+            <label for="ReservationDateTime">Select Day and Time (10:00 - 16:00)</label>
+            <input type="datetime-local" id="ReservationDateTime" name="ReservationDateTime" class="form-control" required
+                   step="1800" />
+        </div>
+
+        <div class="form-group">
+            <label for="DogBreed">Dog Breed</label>
+            <input type="text" id="DogBreed" name="DogBreed" class="form-control" required />
+        </div>
+
+        <div class="form-group">
+            <label for="DogAge">Dog Age</label>
+            <input type="number" id="DogAge" name="DogAge" class="form-control" required min="1" />
+        </div>
+
+        <div class="form-group">
+            <label for="Details">Additional Details</label>
+            <textarea id="Details" name="Details" class="form-control"></textarea>
+        </div>
+        <br />
+
+        <button type="submit" class="btn btn-primary" style="padding-left:10px;">Submit</button>
+    </form>
+</div>

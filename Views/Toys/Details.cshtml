@@ -1,0 +1,89 @@
+﻿@model BarkBuddyApp.Models.Toys
+
+
+@{
+    ViewBag.Title = "Details";
+}
+<script>
+    function showAddToCartMessage(e) {
+        // Show the message
+        e.preventDefault();
+        var messageElement = document.getElementById('cartMessageM');
+        messageElement.style.display = 'block';
+
+
+        // Hide the message after 3 seconds
+        setTimeout(function () {
+            messageElement.style.display = 'none';
+        }, 5000); // 3000 milliseconds = 3 seconds
+    }
+</script>
+<style>
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+    }
+
+    .column {
+        margin: 5px; /* Adjust spacing as needed */
+        flex: 1;
+    }
+
+        .column img {
+            max-width: 100px;
+            height: auto;
+        }
+</style>
+<h2>Details</h2>
+
+<div id="cartMessageM" style="display:none;position:fixed; top: 150px; right: 800px; background-color: #28a745; color: white; padding: 10px; border-radius: 5px;">
+    Added to Cart!
+</div>
+<div class="row">
+    <div class="col-md-8 offset-2">
+        <div class="card mb-12">
+            <div class="row g-0">
+                <div class="col-md-12">
+                    <div class="card-header text-white bg-dark">
+                        <p class="card-text">
+                            <h5 class="card-title">
+                                @Model.Name
+                            </h5>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <img src="@Model.ImageUrl" width="100%" alt="@Model.Name">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <p class="card-text">@Model.Description</p>
+                        <p class="card-text">
+                           
+
+                        <p class="card-text"><b>Price for 1kg: </b>@Model.Price$</p>
+                     
+
+
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card-footer">
+                        <p class="card-text">
+                            <div class="d-flex justify-content-between">
+                                <a href="/Toys" class="btn btn-outline-primary">
+                                    Back to List
+                                </a>
+                                <div class="text-center">
+                                    <a href="/Products/AddToCart/@Model.Id" class="btn btn-success text-white text-center" onclick="showAddToCartMessage(e)"><i class="bi bi-cart-plus"></i> Add to Cart <b>1kg</b> (Price @Model.Price.ToString("c"))</a>
+                                 
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+</div>
