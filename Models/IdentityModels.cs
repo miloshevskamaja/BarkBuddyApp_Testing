@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System.Data.Common;
+using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -20,16 +21,17 @@ namespace BarkBuddyApp.Models
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Producer> Producers { get; set; }
-        public DbSet<DogBreed> DogBreeds { get; set; }
-        public DbSet<Toys> Toys { get; set; }
-        public DbSet<Buyer> Buyers { get; set; }
+  
+        public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<Producer> Producers { get; set; }
+        public virtual DbSet<DogBreed> DogBreeds { get; set; }
+        public virtual DbSet<Toys> Toys { get; set; }
+        public virtual DbSet<Buyer> Buyers { get; set; }
        
-        public DbSet<OrderViewModel> Orders { get; set; }
-        public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
-        public DbSet<Grooming> Groomings { get; set; }
-        public DbSet<GroomingDog> GroomingDogs { get; set; }
+        public virtual DbSet<OrderViewModel> Orders { get; set; }
+        public virtual DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
+        public virtual DbSet<Grooming> Groomings { get; set; }
+        public virtual DbSet<GroomingDog> GroomingDogs { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
    
@@ -50,6 +52,9 @@ namespace BarkBuddyApp.Models
             : base("DefaultConnection", throwIfV1Schema: false)
         {
         }
+
+        public ApplicationDbContext(DbConnection existingConnection, bool throwIfV1Schema)
+    : base(existingConnection, throwIfV1Schema) { }
 
         public static ApplicationDbContext Create()
         {

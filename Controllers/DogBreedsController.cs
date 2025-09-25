@@ -12,7 +12,18 @@ namespace BarkBuddyApp.Controllers
 {
     public class DogBreedsController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private readonly ApplicationDbContext db;
+
+        public DogBreedsController()
+        {
+            db = new ApplicationDbContext();
+        }
+
+
+        public DogBreedsController(ApplicationDbContext context)
+        {
+            db = context;
+        }
 
         // GET: DogBreeds
         public ActionResult Index()
@@ -27,7 +38,7 @@ namespace BarkBuddyApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            DogBreed dogBreed = db.DogBreeds.Find(id);
+            DogBreed dogBreed = db.DogBreeds.FirstOrDefault(p => p.Id == id);
             if (dogBreed == null)
             {
                 return HttpNotFound();
@@ -82,7 +93,15 @@ namespace BarkBuddyApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(dogBreed).State = EntityState.Modified;
+                var existing = db.DogBreeds.Find(dogBreed.Id);
+                if (existing != null)
+                {
+                    existing.Name = dogBreed.Name;
+                    existing.ImageURL = dogBreed.ImageURL;
+                    existing.Description = dogBreed.Description;
+
+                }
+
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

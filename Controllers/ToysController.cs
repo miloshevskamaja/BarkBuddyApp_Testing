@@ -13,7 +13,15 @@ namespace BarkBuddyApp.Controllers
 {
     public class ToysController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        //private ApplicationDbContext db = new ApplicationDbContext();
+
+        private readonly ApplicationDbContext db;
+
+        public ToysController()
+        {
+            db = new ApplicationDbContext();
+        }
+
 
         // GET: Toys
         //public ActionResult Index()
@@ -21,6 +29,11 @@ namespace BarkBuddyApp.Controllers
         //    return View(db.Toys.ToList());
         //}
 
+        public ToysController(ApplicationDbContext context)
+        {
+            db = context;
+        }
+        /*
         public async Task<ActionResult> Index(string searchString)
         {
             ViewBag.ShowSearchForm2 = true;
@@ -41,7 +54,25 @@ namespace BarkBuddyApp.Controllers
                 var filteredProducts = await toys.ToListAsync();  // Execute query
                 return View(filteredProducts);
             }
+        }*/
+
+        public ActionResult Index(string searchString)
+        {
+            ViewBag.ShowSearchForm2 = true;
+            var toys = db.Toys.AsQueryable();
+
+            if (string.IsNullOrEmpty(searchString))
+            {
+                return View(toys.ToList());
+            }
+            else
+            {
+                toys = toys.Where(p => p.Name.Contains(searchString));
+                var filteredProducts = toys.ToList();  // без async
+                return View(filteredProducts);
+            }
         }
+
 
         // GET: Toys/Details/5
         public ActionResult Details(int? id)
@@ -99,7 +130,7 @@ namespace BarkBuddyApp.Controllers
         // POST: Toys/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+       /* [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,ImageUrl,Description,Price")] Toys toys)
         {
@@ -110,7 +141,29 @@ namespace BarkBuddyApp.Controllers
                 return RedirectToAction("Index");
             }
             return View(toys);
+        }*/
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "Id,Name,ImageUrl,Description,Price")] Toys toys)
+        {
+            if (ModelState.IsValid)
+            {
+                var existing = db.Toys.Find(toys.Id);
+                if (existing != null)
+                {
+                    existing.Name = toys.Name;
+                    existing.Description = toys.Description;
+                    existing.Price = toys.Price;
+                    existing.ImageUrl = toys.ImageUrl;
+                }
+
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(toys);
         }
+
 
         // GET: Toys/Delete/5
         public ActionResult Delete(int? id)

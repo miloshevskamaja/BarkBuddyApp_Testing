@@ -12,7 +12,18 @@ namespace BarkBuddyApp.Controllers
 {
     public class GroomingDogsController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private readonly ApplicationDbContext db;
+
+        public GroomingDogsController()
+        {
+            db = new ApplicationDbContext();
+        }
+
+
+        public GroomingDogsController(ApplicationDbContext context)
+        {
+            db = context;
+        }
 
         // GET: GroomingDogs
         public ActionResult Index()
@@ -27,7 +38,7 @@ namespace BarkBuddyApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            GroomingDog groomingDog = db.GroomingDogs.Find(id);
+            GroomingDog groomingDog = db.GroomingDogs.FirstOrDefault(p => p.Id == id);
             if (groomingDog == null)
             {
                 return HttpNotFound();
@@ -82,7 +93,15 @@ namespace BarkBuddyApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(groomingDog).State = EntityState.Modified;
+                var existing = db.GroomingDogs.Find(groomingDog.Id);
+                if (existing != null)
+                {
+                    existing.Name = groomingDog.Name;
+                    existing.ImageUrl = groomingDog.ImageUrl;
+                    existing.PriceForGrooming = groomingDog.PriceForGrooming;
+
+                }
+
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

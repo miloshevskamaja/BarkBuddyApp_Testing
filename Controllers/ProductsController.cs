@@ -1,222 +1,109 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
-using System.Drawing;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Services.Description;
 using BarkBuddyApp.Models;
-using Microsoft.Ajax.Utilities;
-using Microsoft.AspNetCore.Mvc;
 
 namespace BarkBuddyApp.Controllers
 {
     public class ProductsController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
-
         private readonly ApplicationDbContext _context;
 
         public ProductsController()
         {
-            _context = new ApplicationDbContext(); // Initialize your DbContext
+            _context = new ApplicationDbContext();
         }
-       
 
-        // GET: Products
-      
-        [HttpGet]
-        public async Task<ActionResult> Index(string searchString)
+        public ProductsController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+
+        public ActionResult Index(string searchString)
         {
             ViewBag.ShowSearchForm = true;
-      
-            if (string.IsNullOrEmpty(searchString))
-            {
-                var products = db.Products.Include(p => p.Producer);
-                return View(products.ToList());
-            }
-            else {
-                var products = db.Products.Include(p => p.Producer);
+            IQueryable<Product> productsQuery = _context.Products;
 
+            if (!string.IsNullOrEmpty(searchString))
+                productsQuery = productsQuery.Where(p => p.Name.Contains(searchString));
 
-                if (!string.IsNullOrEmpty(searchString))
-                {
-                    // Ensure the search is being applied to the 'Name' property
-                    products = products.Where(p => p.Name.Contains(searchString));
-                }
-
-                var filteredProducts = await products.ToListAsync();  // Execute query
-                return View(filteredProducts);
-            }
+            return View(productsQuery.ToList());
         }
 
-      
 
-        // GET: Products/Details/5
         public ActionResult Details(int? id)
         {
-            if (id == null )
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Product product = db.Products.Find(id);
-            Producer nov=db.Producers.Find(product.ProducerId);
-            product.Producer = nov;
-            string name= product.Producer.Name;
-            ViewBag.Name = name;
-            if (product == null)
-            {
-                return HttpNotFound();
-            }
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var product = _context.Products.FirstOrDefault(p => p.Id == id);
+            if (product == null) return HttpNotFound();
+
+            product.Producer = _context.Producers.Find(product.ProducerId);
+            ViewBag.Name = product.Producer?.Name;
             return View(product);
         }
 
-        // GET: Products/Create
         public ActionResult Create()
         {
-            ViewBag.ProducerId = new SelectList(db.Producers, "Id", "Name");
-            ViewBag.DogBreeds = new MultiSelectList(db.DogBreeds, "Id", "Name");
+            ViewBag.ProducerId = new SelectList(_context.Producers, "Id", "Name");
+            ViewBag.DogBreeds = new MultiSelectList(_context.DogBreeds, "Id", "Name");
             return View();
         }
 
-        // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Name,Description,Price,Price2,ImageUrl,ProducerId")] Product product, int[] DogBreeds)
         {
             if (ModelState.IsValid)
             {
-                Producer producer = db.Producers.Find(product.ProducerId);
-               
-                if (producer != null)
-                {
-                    product.Producer = producer;
-                }
-                product.DogBreeds = db.DogBreeds.Where(b => DogBreeds.Contains(b.Id)).ToList();
+                product.Producer = _context.Producers.Find(product.ProducerId);
 
-                db.Products.Add(product);
-                db.SaveChanges();
+                if (DogBreeds != null && DogBreeds.Any())
+                    product.DogBreeds = _context.DogBreeds.Where(b => DogBreeds.Contains(b.Id)).ToList();
+
+                _context.Products.Add(product);
+                _context.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.ProducerId = new SelectList(db.Producers, "Id", "Name", product.ProducerId);
-            ViewBag.DogBreeds = new MultiSelectList(db.DogBreeds, "Id", "Name");
+            ViewBag.ProducerId = new SelectList(_context.Producers, "Id", "Name", product.ProducerId);
+            ViewBag.DogBreeds = new MultiSelectList(_context.DogBreeds, "Id", "Name");
             return View(product);
         }
 
-        
-        public ActionResult DeliveryInfo()
-        {
-
-            ShoppingCart shoppingCart = (ShoppingCart)Session["ShoppingCart"];
-
-            
-            var model = new OrderViewModel
-            {
-                Buyer = new Buyer(),
-                ShoppingCartItems = shoppingCart.BuyingProducts.Select((product, index) => new ShoppingCartItem
-                {
-                    ProductName = product,
-                    Price = shoppingCart.Prices[index],
-                    Quantity = shoppingCart.Quantities[index]
-                }).ToList()
-            };
-
-            return View(model); 
-        }
-
-     
-        [HttpPost]
-        public ActionResult DeliveryInfo(Buyer buyer)
-        {
-            ShoppingCart shoppingCart = (ShoppingCart)Session["ShoppingCart"];
-            if (ModelState.IsValid)
-            {
-         
-                db.Buyers.Add(buyer);
-                db.SaveChanges();
-
-                
-                var orderViewModel = new OrderViewModel
-                {
-                    Buyer = buyer,
-                    ShoppingCartItems = shoppingCart.BuyingProducts.Select((product, index) => new ShoppingCartItem
-                    {
-                        ProductName = product,
-                        Price = shoppingCart.Prices[index],
-                        Quantity = shoppingCart.Quantities[index]
-                        
-                    }).ToList()
-                };
-
-         
-                db.Orders.Add(orderViewModel);
-                db.SaveChanges();
-                Session["ShoppingCart"] = null;
-
-                
-
-            
-                return RedirectToAction("Succ");
-            }
-
-            
-            return View(buyer);
-        }
-        
-
-  
-
-
-        public ActionResult Orders()
-        {
-            var orderData = db.Orders
-                               .Include(o => o.Buyer)  
-                               .ToList();  
-
-            return View(orderData);
-        }
-
-
-
-
-        // GET: Products/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Product product = db.Products.Include(p => p.DogBreeds).FirstOrDefault(p => p.Id == id);
+
+    
+            var product = _context.Products.FirstOrDefault(p => p.Id == id);
             if (product == null)
-            {
                 return HttpNotFound();
-            }
-            ViewBag.ProducerId = new SelectList(db.Producers, "Id", "Name", product.ProducerId);
-            ViewBag.DogBreeds = new MultiSelectList(db.DogBreeds, "Id", "Name", product.DogBreeds.Select(b => b.Id).ToArray());
+
+         
+            ViewBag.ProducerId = new SelectList(_context.Producers, "Id", "Name", product.ProducerId);
+
+         
+            var dogBreedIds = product.DogBreeds?.Select(b => b.Id).ToArray() ?? new int[0];
+            ViewBag.DogBreeds = new MultiSelectList(_context.DogBreeds, "Id", "Name", dogBreedIds);
+
             return View(product);
         }
 
-        // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,Description,Price,Price2,ImageUrl,ProducerId")] Product product, int[] DogBreeds)
         {
             if (ModelState.IsValid)
             {
-                var existingProduct = db.Products.Include(p => p.DogBreeds).FirstOrDefault(p => p.Id == product.Id);
-
+                var existingProduct = _context.Products.Include(p => p.DogBreeds).FirstOrDefault(p => p.Id == product.Id);
                 if (existingProduct != null)
                 {
-                    
                     existingProduct.Name = product.Name;
                     existingProduct.Description = product.Description;
                     existingProduct.Price = product.Price;
@@ -226,298 +113,191 @@ namespace BarkBuddyApp.Controllers
 
                     existingProduct.DogBreeds.Clear();
                     if (DogBreeds != null && DogBreeds.Any())
-                    {
-                        existingProduct.DogBreeds = db.DogBreeds.Where(b => DogBreeds.Contains(b.Id)).ToList();
-                    }
-                    db.Entry(existingProduct).State = EntityState.Modified;
-                    db.SaveChanges();
+                        existingProduct.DogBreeds = _context.DogBreeds.Where(b => DogBreeds.Contains(b.Id)).ToList();
+
+                    _context.Entry(existingProduct).State = EntityState.Modified;
+                    _context.SaveChanges();
                     return RedirectToAction("Index");
                 }
             }
-            ViewBag.ProducerId = new SelectList(db.Producers, "Id", "Name", product.ProducerId);
-            ViewBag.DogBreeds = new MultiSelectList(db.DogBreeds, "Id", "Name", DogBreeds);
+
+            ViewBag.ProducerId = new SelectList(_context.Producers, "Id", "Name", product.ProducerId);
+            ViewBag.DogBreeds = new MultiSelectList(_context.DogBreeds, "Id", "Name", DogBreeds);
             return View(product);
         }
-
-        // GET: Products/Delete/5
+ 
         public ActionResult Delete(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Product product = db.Products.Find(id);
-            if (product == null)
-            {
-                return HttpNotFound();
-            }
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+
+            var product = _context.Products.FirstOrDefault(p => p.Id == id);
+            if (product == null) return HttpNotFound();
             return View(product);
         }
 
-        // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Product product = db.Products.Find(id);
-            db.Products.Remove(product);
-            db.SaveChanges();
+
+            var product = _context.Products.FirstOrDefault(p => p.Id == id);
+            if (product != null)
+            {
+                _context.Products.Remove(product);
+                _context.SaveChanges();
+            }
             return RedirectToAction("Index");
         }
 
 
-        [Authorize(Roles ="User")]
+        [Authorize(Roles = "User")]
         public ActionResult AddToCart(int? id, int quantity = 1)
         {
-            Console.WriteLine("AddToCart called with Product ID: " + id);
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Product product = db.Products.Find(id);
-            if (product == null)
-            {
-                return HttpNotFound();
-            }
+            var product = _context.Products.Find(id);
+            if (product == null) return HttpNotFound();
 
-            // Retrieve or initialize shopping cart from session
-            ShoppingCart cart = Session["ShoppingCart"] as ShoppingCart;
-            if (cart == null)
-            {
-                cart = new ShoppingCart();
-            }
-
-            // Add the product to the cart
+            var cart = Session["ShoppingCart"] as ShoppingCart ?? new ShoppingCart();
             cart.AddProduct(product.Name, product.Price, quantity);
-
-            // Save the cart back to the session
             Session["ShoppingCart"] = cart;
 
-            return RedirectToAction("Index");  // Redirect back to the product list or another page
-
+            return RedirectToAction("Index");
         }
+
         [Authorize(Roles = "User")]
         public ActionResult AddToCart2(int? id, int quantity = 1)
         {
-            Console.WriteLine("AddToCart called with Product ID: " + id);
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Product product = db.Products.Find(id);
-            if (product == null)
-            {
-                return HttpNotFound();
-            }
+            var product = _context.Products.Find(id);
+            if (product == null) return HttpNotFound();
 
-            // Retrieve or initialize shopping cart from session
-            ShoppingCart cart = Session["ShoppingCart"] as ShoppingCart;
-            if (cart == null)
-            {
-                cart = new ShoppingCart();
-            }
-
-            // Add the product to the cart
+            var cart = Session["ShoppingCart"] as ShoppingCart ?? new ShoppingCart();
             cart.AddProduct(product.Name, product.Price2, quantity);
-
-            // Save the cart back to the session
             Session["ShoppingCart"] = cart;
 
-            return RedirectToAction("Index");  // Redirect back to the product list or another page
+            return RedirectToAction("Index");
         }
-
 
         [Authorize(Roles = "User")]
         public ActionResult AddToCart3(int? id, int quantity = 1)
         {
-            Console.WriteLine("AddToCart called with Product ID: " + id);
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Toys toy = db.Toys.Find(id);
-            if (toy == null)
-            {
-                return HttpNotFound();
-            }
+            var toy = _context.Toys.Find(id);
+            if (toy == null) return HttpNotFound();
 
-           
-           ShoppingCart cart = Session["ShoppingCart"] as ShoppingCart;
-            if (cart == null)
-            {
-                cart = new ShoppingCart();
-            }
+            var cart = Session["ShoppingCart"] as ShoppingCart ?? new ShoppingCart();
 
-     
             int productIndex = cart.BuyingProducts.IndexOf(toy.Name);
             if (productIndex >= 0)
-            {
-                
                 cart.Quantities[productIndex] += quantity;
-            }
             else
-            {
-              
                 cart.AddProduct(toy.Name, toy.Price, quantity);
-            }
 
-        
             Session["ShoppingCart"] = cart;
-
-            return RedirectToAction("Index");  
+            return RedirectToAction("Index");
         }
-
-       
 
         public ActionResult ShoppingCart()
         {
-            ShoppingCart cart = Session["ShoppingCart"] as ShoppingCart;
-            if (cart == null)
-            {
-                cart = new ShoppingCart(); 
-            }
-
+            var cart = Session["ShoppingCart"] as ShoppingCart ?? new ShoppingCart();
             return View(cart);
         }
+
+        [HttpPost]
         public ActionResult UpdateQuantity(int index, string action)
         {
-            ShoppingCart cart = (ShoppingCart)Session["ShoppingCart"];
+            var cart = Session["ShoppingCart"] as ShoppingCart;
+            if (cart == null) return RedirectToAction("ShoppingCart");
 
-            if (cart == null)
-            {
-               
-                return RedirectToAction("ShoppingCart");
-            }
-
-            if (action == "increase")
-            {
-                cart.Quantities[index]++;
-            }
-            else if (action == "decrease" && cart.Quantities[index] > 1)
-            {
-                cart.Quantities[index]--;
-            }
+            if (action == "increase") cart.Quantities[index]++;
+            else if (action == "decrease" && cart.Quantities[index] > 1) cart.Quantities[index]--;
 
             Session["ShoppingCart"] = cart;
-
             return RedirectToAction("ShoppingCart");
         }
 
-        //this func removes product from shopping cart
         [HttpPost]
         public ActionResult RemoveItem(int index)
         {
-            ShoppingCart cart = (ShoppingCart)Session["ShoppingCart"];
-
+            var cart = Session["ShoppingCart"] as ShoppingCart;
             cart.BuyingProducts.RemoveAt(index);
             cart.Prices.RemoveAt(index);
             cart.Quantities.RemoveAt(index);
-
             Session["ShoppingCart"] = cart;
             return RedirectToAction("ShoppingCart");
         }
 
-        //this func removes order from the orders table
+        public ActionResult Orders()
+        {
+         
+            var orders = _context.Orders.ToList(); 
+            return View(orders);
+        }
+
         [HttpPost]
         public ActionResult RemoveItem2(int orderId)
         {
-            // Retrieve the list of orders from the database
-            var orders = db.Orders.ToList(); // Assuming you have a list of orders in your database
-
-            // Find the order to remove
-            var orderToRemove = orders.FirstOrDefault(o => o.Id == orderId);
-
-            if (orderToRemove != null)
+      
+            var order = _context.Orders.FirstOrDefault(o => o.Id == orderId);
+            if (order != null)
             {
-                // Remove the order from the list
-                db.Orders.Remove(orderToRemove);
-
-                // Save changes to the database
-                db.SaveChanges();
+                _context.Orders.Remove(order);
+                _context.SaveChanges();
             }
-
-            // Redirect to the Orders view
             return RedirectToAction("Orders");
         }
 
-        //this func removes reservation from the Grooming Schedule table
-        [HttpPost]
-        public ActionResult RemoveItem3(int Id)
+
+   
+        public ActionResult Groomings()
         {
-            // Retrieve the list of orders from the database
-            var reservations = db.Groomings.ToList(); // Assuming you have a list of orders in your database
+            return View(_context.Groomings.ToList());
+        }
 
-            // Find the order to remove
-            var reservationToRemove = reservations.FirstOrDefault(o => o.Id == Id);
-
-            if (reservationToRemove != null)
+        [HttpPost]
+        public ActionResult RemoveItem3(int id)
+        {
+            var grooming = _context.Groomings.Find(id);
+            if (grooming != null)
             {
-                // Remove the order from the list
-                db.Groomings.Remove(reservationToRemove);
-
-                // Save changes to the database
-                db.SaveChanges();
+                _context.Groomings.Remove(grooming);
+                _context.SaveChanges();
             }
-
-            // Redirect to the Orders view
             return RedirectToAction("Groomings");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-
         [HttpGet]
-        public ActionResult ScheduleGrooming()
-        {
-            return View();
-        }
+        public ActionResult ScheduleGrooming() => View();
 
         [HttpPost]
         public ActionResult ScheduleGrooming(Grooming model)
         {
             if (ModelState.IsValid)
             {
-                // Check if the selected time is already reserved
-                var existingReservation = db.Groomings
-                    .FirstOrDefault(r => r.ReservationDateTime == model.ReservationDateTime);
-
-                if (existingReservation != null)
+                var exists = _context.Groomings.FirstOrDefault(g => g.ReservationDateTime == model.ReservationDateTime);
+                if (exists != null)
                 {
                     ModelState.AddModelError("", "The selected time is already reserved.");
                     return View(model);
                 }
 
-                // Save the reservation
-              
-                db.Groomings.Add(model);
-                db.SaveChanges();
-
+                _context.Groomings.Add(model);
+                _context.SaveChanges();
                 return RedirectToAction("Succ");
             }
-
             return View(model);
         }
 
-        
-        public ActionResult Groomings()
-        {
-            var reservations = db.Groomings.ToList();
-            return View(reservations);
-        }
+        public ActionResult Succ() => View();
 
-        public ActionResult Succ()
+        protected override void Dispose(bool disposing)
         {
-            return View();
+            if (disposing) _context.Dispose();
+            base.Dispose(disposing);
         }
     }
 }
