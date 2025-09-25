@@ -11,8 +11,8 @@
     <ProjectGuid>{B2BE95B1-5B47-460B-BF13-4159F3CF9A24}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UnitTestProject1</RootNamespace>
-    <AssemblyName>UnitTestProject1</AssemblyName>
+    <RootNamespace>BarkBuddyController.Tests</RootNamespace>
+    <AssemblyName>BarkBuddyController.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -137,13 +137,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Conotrollers\AccountControllerTests.cs" />
-    <Compile Include="Conotrollers\DogBreedsControllerTests.cs" />
-    <Compile Include="Conotrollers\GroomingDogsControllerTests.cs" />
-    <Compile Include="Conotrollers\ProducersControllerTests.cs" />
-    <Compile Include="Conotrollers\ProductControllerTests.cs" />
-    <Compile Include="Conotrollers\TestableAccountController .cs" />
-    <Compile Include="Conotrollers\ToysControllerTests.cs" />
+    <Compile Include="Controllers\AccountControllerTests.cs" />
+    <Compile Include="Controllers\DogBreedsControllerTests.cs" />
+    <Compile Include="Controllers\GroomingDogsControllerTests.cs" />
+    <Compile Include="Controllers\ProducersControllerTests.cs" />
+    <Compile Include="Controllers\ProductControllerTests.cs" />
+    <Compile Include="Controllers\TestableAccountController .cs" />
+    <Compile Include="Controllers\ToysControllerTests.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

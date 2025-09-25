@@ -64,7 +64,7 @@ public class ProducerTests
     {
         var producer = new Producer
         {
-            Name = new string('A', 101), // 101 chars
+            Name = new string('A', 101), 
             Logo = "https://example.com/logo.png",
             Description = "Test"
         };
@@ -81,7 +81,7 @@ public class ProducerTests
         {
             Name = "Producer Name",
             Logo = "https://example.com/logo.png",
-            Description = new string('B', 501) // 501 chars
+            Description = new string('B', 501) 
         };
 
         var results = ValidateModel(producer);
@@ -101,6 +101,6 @@ public class ProducerTests
 
         var results = ValidateModel(producer);
 
-        results.Should().BeEmpty(); // no validation errors
+        results.Should().BeEmpty();
     }
 }

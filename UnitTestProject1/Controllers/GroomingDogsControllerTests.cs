@@ -22,7 +22,7 @@ namespace UnitTestProject1.Controllers
             dbSet.As<IQueryable<GroomingDog>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
             dbSet.As<IQueryable<GroomingDog>>().Setup(m => m.GetEnumerator()).Returns(queryable.GetEnumerator());
 
-            // важно за Find()
+    
             dbSet.Setup(m => m.Find(It.IsAny<object[]>())).Returns<object[]>(ids =>
             {
                 var id = (int)ids[0];

@@ -19,10 +19,10 @@ namespace UnitTestProject1.Conotrollers
             _authManager = authManager;
         }
 
-        // нов public/protected property за тестирање
+
         public IAuthenticationManager TestAuthenticationManager => _authManager;
 
-        // override LogOff да користи TestAuthenticationManager наместо private AuthenticationManager
+     
         public override ActionResult LogOff()
         {
             TestAuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);

@@ -42,7 +42,7 @@ namespace UnitTestProject1.Conotrollers
 
             var mockContext = new Mock<ApplicationDbContext>();
             mockContext.Setup(c => c.Producers).Returns(mockSet.Object);
-           // mockContext.Setup(c => c.Set<Producer>()).Returns(mockSet.Object);
+       
 
             var controller = new ProducersController(mockContext.Object);
             controller.ControllerContext = new ControllerContext();

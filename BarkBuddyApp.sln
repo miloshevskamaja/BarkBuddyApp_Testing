@@ -5,11 +5,13 @@ VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarkBuddyApp", "BarkBuddyApp.csproj", "{B002EBA8-397E-4530-81F7-7DC4FA5A36E1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BarkBuddyApp.Tests", "BarkBuddyApp.Tests\BarkBuddyApp.Tests.csproj", "{D8FA83E6-5055-4710-9F57-20626A706440}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BarkBuddyApp.ModelTests", "BarkBuddyApp.Tests\BarkBuddyApp.ModelTests.csproj", "{D8FA83E6-5055-4710-9F57-20626A706440}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarkBuddyControllers.Tests", "UnitTestProject1\BarkBuddyControllers.Tests.csproj", "{B2BE95B1-5B47-460B-BF13-4159F3CF9A24}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarkBuddyApp.ControllerTests", "UnitTestProject1\BarkBuddyApp.ControllerTests.csproj", "{B2BE95B1-5B47-460B-BF13-4159F3CF9A24}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarkBuddyApp.IntegrationTests", "BarkBuddyApp.IntegrationTests\BarkBuddyApp.IntegrationTests.csproj", "{5D9A68B7-67F7-4231-AC5F-0138ABADF37D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarkBuddyApp.UITests", "BarkBuddyApp.UITests\BarkBuddyApp.UITests.csproj", "{A017A16A-1167-4FD3-AC19-9A5AB3A2ABE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{5D9A68B7-67F7-4231-AC5F-0138ABADF37D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D9A68B7-67F7-4231-AC5F-0138ABADF37D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D9A68B7-67F7-4231-AC5F-0138ABADF37D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A017A16A-1167-4FD3-AC19-9A5AB3A2ABE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A017A16A-1167-4FD3-AC19-9A5AB3A2ABE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A017A16A-1167-4FD3-AC19-9A5AB3A2ABE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A017A16A-1167-4FD3-AC19-9A5AB3A2ABE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

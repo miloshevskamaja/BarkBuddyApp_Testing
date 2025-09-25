@@ -72,7 +72,7 @@ namespace UnitTestProject1.Controllers
         [Fact]
         public async Task Login_Post_ValidModel_SuccessRedirectsToLocal()
         {
-            // Arrange
+      
             var userStoreMock = new Mock<IUserStore<ApplicationUser>>();
             var userManagerMock = new Mock<ApplicationUserManager>(userStoreMock.Object);
             var authManagerMock = new Mock<IAuthenticationManager>();
@@ -84,7 +84,6 @@ namespace UnitTestProject1.Controllers
 
             var controller = new AccountController(userManagerMock.Object, signInManagerMock.Object);
 
-            // Setup ControllerContext и UrlHelper
             var httpContextMock = new Mock<HttpContextBase>();
             controller.ControllerContext = new ControllerContext
             {
@@ -102,10 +101,10 @@ namespace UnitTestProject1.Controllers
                 RememberMe = true
             };
 
-            // Act
+           
             var result = await controller.Login(model, "/Home") as RedirectResult;
 
-            // Assert
+            
             Assert.NotNull(result);
             Assert.Equal("/Home", result.Url);
         }
@@ -114,7 +113,7 @@ namespace UnitTestProject1.Controllers
         [Fact]
         public async Task Register_Post_ValidModel_CreatesUser()
         {
-            // Arrange
+       
             var userStoreMock = new Mock<IUserStore<ApplicationUser>>();
             var mockUserMgr = new Mock<ApplicationUserManager>(userStoreMock.Object);
             var authManagerMock = new Mock<IAuthenticationManager>();
@@ -130,7 +129,7 @@ namespace UnitTestProject1.Controllers
 
             var controller = new AccountController(mockUserMgr.Object, mockSignIn.Object);
 
-            // Setup ControllerContext ако треба HttpContext (во овој случај не е критично)
+        
             var httpContextMock = new Mock<HttpContextBase>();
             controller.ControllerContext = new ControllerContext
             {
@@ -144,15 +143,15 @@ namespace UnitTestProject1.Controllers
                 ConfirmPassword = "Password1!"
             };
 
-            // Act
+     
             var result = await controller.Register(model) as RedirectToRouteResult;
 
-            // Assert
+           
             Assert.NotNull(result);
             Assert.Equal("Index", result.RouteValues["action"]);
             Assert.Equal("Home", result.RouteValues["controller"]);
 
-            // Verify CreateAsync и SignInAsync се повикани точно еднаш
+           
             mockUserMgr.Verify(u => u.CreateAsync(It.IsAny<ApplicationUser>(), "Password1!"), Times.Once);
             mockSignIn.Verify(s => s.SignInAsync(It.IsAny<ApplicationUser>(), false, false), Times.Once);
         }

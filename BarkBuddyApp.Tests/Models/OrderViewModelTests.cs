@@ -20,7 +20,7 @@ public class OrderViewModelTests
         var model = new OrderViewModel
         {
             Id = 1,
-            Buyer = new Buyer { Name = "John Doe", Email = "john@example.com" }, // пример
+            Buyer = new Buyer { Name = "John Doe", Email = "john@example.com" }, 
             ShoppingCartItems = new List<ShoppingCartItem>
             {
                 new ShoppingCartItem { ProductId = 1, Quantity = 2 }
@@ -29,7 +29,7 @@ public class OrderViewModelTests
 
         var results = ValidateModel(model);
 
-        results.Should().BeEmpty(); // No validation errors
+        results.Should().BeEmpty(); 
     }
     [Fact]
     public void OrderViewModel_ShouldBeInvalid_WhenBuyerIsNull()
@@ -58,7 +58,7 @@ public class OrderViewModelTests
 
         var results = ValidateModel(model);
 
-        results.Should().Contain(r => r.MemberNames.Contains("Buyer")); // очекувана грешка
+        results.Should().Contain(r => r.MemberNames.Contains("Buyer")); 
     }
 
 }

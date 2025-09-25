@@ -79,7 +79,7 @@ public class ShoppingCartItemTests
         var model = new ShoppingCartItem
         {
             Id = 1,
-            ProductName = "a",  // 1 character only
+            ProductName = "a",  
             Price = 10.5,
             Quantity = 2,
             OrderId = 1,
@@ -97,7 +97,7 @@ public class ShoppingCartItemTests
         var model = new ShoppingCartItem
         {
             Id = 1,
-            ProductName = "ab",  // Точно 2 карактери
+            ProductName = "ab",  
             Price = 10.5,
             Quantity = 2,
             OrderId = 1,

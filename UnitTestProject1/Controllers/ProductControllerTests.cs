@@ -13,7 +13,7 @@ public class ProductsControllerTests
 {
     private ApplicationDbContext GetDbContextMock(List<Product> products, List<Producer> producers)
     {
-        // Mock DbSet за Products
+    
         var mockSetProducts = new Mock<DbSet<Product>>();
         var queryableProducts = products.AsQueryable();
         mockSetProducts.As<IQueryable<Product>>().Setup(m => m.Provider).Returns(queryableProducts.Provider);
@@ -21,7 +21,6 @@ public class ProductsControllerTests
         mockSetProducts.As<IQueryable<Product>>().Setup(m => m.ElementType).Returns(queryableProducts.ElementType);
         mockSetProducts.As<IQueryable<Product>>().Setup(m => m.GetEnumerator()).Returns(queryableProducts.GetEnumerator());
 
-        // Mock DbSet за Producers
         var mockSetProducers = new Mock<DbSet<Producer>>();
         var queryableProducers = producers.AsQueryable();
         mockSetProducers.As<IQueryable<Producer>>().Setup(m => m.Provider).Returns(queryableProducers.Provider);
@@ -29,7 +28,7 @@ public class ProductsControllerTests
         mockSetProducers.As<IQueryable<Producer>>().Setup(m => m.ElementType).Returns(queryableProducers.ElementType);
         mockSetProducers.As<IQueryable<Producer>>().Setup(m => m.GetEnumerator()).Returns(queryableProducers.GetEnumerator());
 
-        // Mock ApplicationDbContext
+      
         var mockContext = new Mock<ApplicationDbContext>();
         mockContext.Setup(c => c.Products).Returns(mockSetProducts.Object);
         mockContext.Setup(c => c.Producers).Returns(mockSetProducers.Object);
@@ -43,7 +42,7 @@ public class ProductsControllerTests
     {
         var controller = new ProductsController(db);
 
-        // Mock session
+      
         var mockSession = new Mock<HttpSessionStateBase>();
         var sessionItems = new Dictionary<string, object>();
         mockSession.Setup(s => s["ShoppingCart"]).Returns((string key) =>
@@ -52,24 +51,21 @@ public class ProductsControllerTests
         mockSession.SetupSet(s => s["ShoppingCart"] = It.IsAny<object>())
                    .Callback<string, object>((key, value) => sessionItems[key] = value);
 
-        // Mock HttpContext
         var mockContext = new Mock<HttpContextBase>();
         mockContext.Setup(c => c.Session).Returns(mockSession.Object);
 
-        // ControllerContext
         controller.ControllerContext = new ControllerContext
         {
             HttpContext = mockContext.Object
         };
 
-        // Mock Find for DbSet<Product>
+    
         if (products != null)
         {
             var mockSetProducts = Mock.Get(db.Products);
             mockSetProducts.Setup(m => m.Find(It.IsAny<object[]>())).Returns<object[]>(ids => products.FirstOrDefault(p => p.Id == (int)ids[0]));
         }
 
-        // Mock Find for DbSet<Toys>
         if (toys != null)
         {
             var mockSetToys = Mock.Get(db.Toys);
@@ -177,7 +173,7 @@ public class ProductsControllerTests
         Assert.NotNull(cart);
         Assert.Single(cart.BuyingProducts);
         Assert.Equal(3, cart.Quantities[0]);
-        Assert.Equal(90, cart.Prices[0]); // Price2
+        Assert.Equal(90, cart.Prices[0]); 
     }
 
     [Fact]
@@ -234,7 +230,7 @@ public class ProductsControllerTests
         List<OrderViewModel> orders,
         List<Grooming> groomings)
     {
-        // ------------------- Products -------------------
+ 
         var mockSetProducts = new Mock<DbSet<Product>>();
         var queryableProducts = products.AsQueryable();
 
@@ -243,7 +239,7 @@ public class ProductsControllerTests
         mockSetProducts.As<IQueryable<Product>>().Setup(m => m.ElementType).Returns(queryableProducts.ElementType);
         mockSetProducts.As<IQueryable<Product>>().Setup(m => m.GetEnumerator()).Returns(queryableProducts.GetEnumerator());
 
-        // Populate DogBreeds for each product
+    
         foreach (var p in products)
         {
             p.DogBreeds = new List<DogBreed>();
@@ -253,7 +249,7 @@ public class ProductsControllerTests
             }
         }
 
-        // ------------------- Producers -------------------
+       
         var mockSetProducers = new Mock<DbSet<Producer>>();
         var queryableProducers = producers.AsQueryable();
         mockSetProducers.As<IQueryable<Producer>>().Setup(m => m.Provider).Returns(queryableProducers.Provider);
@@ -261,7 +257,7 @@ public class ProductsControllerTests
         mockSetProducers.As<IQueryable<Producer>>().Setup(m => m.ElementType).Returns(queryableProducers.ElementType);
         mockSetProducers.As<IQueryable<Producer>>().Setup(m => m.GetEnumerator()).Returns(queryableProducers.GetEnumerator());
 
-        // ------------------- DogBreeds -------------------
+      
         var mockSetDogBreeds = new Mock<DbSet<DogBreed>>();
         var queryableDogBreeds = dogBreeds.AsQueryable();
         mockSetDogBreeds.As<IQueryable<DogBreed>>().Setup(m => m.Provider).Returns(queryableDogBreeds.Provider);
@@ -269,7 +265,7 @@ public class ProductsControllerTests
         mockSetDogBreeds.As<IQueryable<DogBreed>>().Setup(m => m.ElementType).Returns(queryableDogBreeds.ElementType);
         mockSetDogBreeds.As<IQueryable<DogBreed>>().Setup(m => m.GetEnumerator()).Returns(queryableDogBreeds.GetEnumerator());
 
-        // ------------------- Orders -------------------
+      
         var mockSetOrders = new Mock<DbSet<OrderViewModel>>();
         var queryableOrders = orders.AsQueryable();
         mockSetOrders.As<IQueryable<OrderViewModel>>().Setup(m => m.Provider).Returns(queryableOrders.Provider);
@@ -278,7 +274,6 @@ public class ProductsControllerTests
         mockSetOrders.As<IQueryable<OrderViewModel>>().Setup(m => m.GetEnumerator()).Returns(queryableOrders.GetEnumerator());
         mockSetOrders.Setup(m => m.Find(It.IsAny<int>())).Returns((object id) => orders.FirstOrDefault(o => o.Id == (int)id));
 
-        // ------------------- Groomings -------------------
         var mockSetGroomings = new Mock<DbSet<Grooming>>();
         var queryableGroomings = groomings.AsQueryable();
         mockSetGroomings.As<IQueryable<Grooming>>().Setup(m => m.Provider).Returns(queryableGroomings.Provider);
@@ -286,7 +281,7 @@ public class ProductsControllerTests
         mockSetGroomings.As<IQueryable<Grooming>>().Setup(m => m.ElementType).Returns(queryableGroomings.ElementType);
         mockSetGroomings.As<IQueryable<Grooming>>().Setup(m => m.GetEnumerator()).Returns(queryableGroomings.GetEnumerator());
 
-        // ------------------- Mock DbContext -------------------
+
         var mockContext = new Mock<ApplicationDbContext>();
         mockContext.Setup(c => c.Products).Returns(mockSetProducts.Object);
         mockContext.Setup(c => c.Producers).Returns(mockSetProducers.Object);
@@ -297,7 +292,7 @@ public class ProductsControllerTests
         return mockContext.Object;
     }
 
-    // ------------------- Controller Setup with Session -------------------
+
     private ProductsController SetupControllerWithSession(ApplicationDbContext db)
     {
         var controller = new ProductsController(db);

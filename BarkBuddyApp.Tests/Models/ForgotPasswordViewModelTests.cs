@@ -50,6 +50,6 @@ public class ForgotPasswordViewModelTests
 
         var results = ValidateModel(model);
 
-        results.Should().BeEmpty(); // No validation errors
+        results.Should().BeEmpty(); 
     }
 }

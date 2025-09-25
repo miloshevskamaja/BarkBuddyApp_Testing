@@ -107,7 +107,7 @@ public class ProducersController_IntegrationTests : IDisposable
     {
         var invalid = new Producer
         {
-            // Name missing → invalid
+        
             Logo = "https://ex.com/invalid.png"
         };
         _controller.ModelState.AddModelError("Name", "required");

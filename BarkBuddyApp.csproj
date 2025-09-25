@@ -266,6 +266,10 @@
     <Compile Include="Migrations\202409261318499_tenth.Designer.cs">
       <DependentUpon>202409261318499_tenth.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202509251750205_final.cs" />
+    <Compile Include="Migrations\202509251750205_final.Designer.cs">
+      <DependentUpon>202509251750205_final.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Buyer.cs" />
@@ -450,6 +454,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202409261318499_tenth.resx">
       <DependentUpon>202409261318499_tenth.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509251750205_final.resx">
+      <DependentUpon>202509251750205_final.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
