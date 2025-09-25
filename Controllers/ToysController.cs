@@ -13,7 +13,7 @@ namespace BarkBuddyApp.Controllers
 {
     public class ToysController : Controller
     {
-        //private ApplicationDbContext db = new ApplicationDbContext();
+     
 
         private readonly ApplicationDbContext db;
 

@@ -54,7 +54,8 @@ namespace BarkBuddyApp.Models
         }
 
         public ApplicationDbContext(DbConnection existingConnection, bool throwIfV1Schema)
-    : base(existingConnection, throwIfV1Schema) { }
+     : base(existingConnection, throwIfV1Schema) { }
+
 
         public static ApplicationDbContext Create()
         {

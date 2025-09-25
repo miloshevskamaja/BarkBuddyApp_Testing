@@ -1,41 +1,31 @@
 ﻿using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using Xunit;
+using Effort;
 using BarkBuddyApp.Controllers;
 using BarkBuddyApp.Models;
-using Effort;                        // In-memory EF6 provider
-using Xunit;
-using System.Data.Common;
-
-// Тест DbContext што користи Effort конекција
-/*public sealed class TestDbContext : ApplicationDbContext
-{
-    public TestDbContext(System.Data.Common.DbConnection conn) : base(conn, true) { }
-}*/
+using AppDb = BarkBuddyApp.Models.ApplicationDbContext;
+using System.Data.Common; 
 
 public class GroomingDogsControllerTests : System.IDisposable
 {
-    /*private readonly TestDbContext _db;*/
+    private readonly AppDb _db;       
     private readonly GroomingDogsController _controller;
 
     public GroomingDogsControllerTests()
     {
-        // 1) In-memory конекција (секој тест класа има своја „база“)
-       /* var conn = DbConnectionFactory.CreateTransient(); // Effort*/
-
-        // 2) Реален EF6 контекст врзан за in-memory
-       /* _db = new TestDbContext(conn);*/
-
-        var conn = Effort.DbConnectionFactory.CreateTransient();
-        using var _db = new ApplicationDbContext(conn, false);   // ако ctor е public или internal + InternalsVisibleTo
+  
+        var conn = DbConnectionFactory.CreateTransient();
 
 
-        // 3) Seed податоци
+        _db = new AppDb(conn, false);     
+
+
         _db.GroomingDogs.Add(new GroomingDog { Id = 1, Name = "Small Dog", ImageUrl = "s.jpg", PriceForGrooming = 25 });
         _db.GroomingDogs.Add(new GroomingDog { Id = 2, Name = "Big Dog", ImageUrl = "b.jpg", PriceForGrooming = 40 });
         _db.SaveChanges();
 
-        // 4) Контролерот да го користи истиот контекст!
         _controller = new GroomingDogsController(_db);
     }
 
@@ -89,7 +79,7 @@ public class GroomingDogsControllerTests : System.IDisposable
 
         Assert.NotNull(res);
         Assert.Equal("Index", res.RouteValues["action"]);
-        Assert.Equal(3, _db.GroomingDogs.Count());           // додаден
+        Assert.Equal(3, _db.GroomingDogs.Count());
         Assert.NotNull(_db.GroomingDogs.Find(3));
     }
 
@@ -113,7 +103,7 @@ public class GroomingDogsControllerTests : System.IDisposable
 
         Assert.NotNull(res);
         Assert.Equal("Index", res.RouteValues["action"]);
-        Assert.Equal(1, _db.GroomingDogs.Count()); // останува само Id=2
+        Assert.Equal(1, _db.GroomingDogs.Count()); 
         Assert.Null(_db.GroomingDogs.Find(1));
     }
 }
